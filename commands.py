@@ -47,3 +47,4 @@ def bot_logic(s):
         return s % 5
 
  
+ 
