@@ -9,6 +9,7 @@ print("Server starts")
 updater.dispatcher.add_handler(CommandHandler('hello', c.hello))
 updater.dispatcher.add_handler(CommandHandler('help', c.help))
 updater.dispatcher.add_handler(CommandHandler('run', c.run))
+updater.dispatcher.add_handler(CommandHandler('play', c.play_bot))
 
 updater.start_polling()
 updater.idle()
