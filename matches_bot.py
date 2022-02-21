@@ -8,7 +8,7 @@ updater = Updater('5110228065:AAGeoqKoZEpzIhU5GD_b76QLXmuf01uwp9I')
 print("Server starts")
 updater.dispatcher.add_handler(CommandHandler('hello', c.hello))
 updater.dispatcher.add_handler(CommandHandler('help', c.help))
-updater.dispatcher.add_handler(CommandHandler('run', c.run))
+#updater.dispatcher.add_handler(CommandHandler('run', c.run))
 
 updater.start_polling()
 updater.idle()
