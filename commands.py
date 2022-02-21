@@ -2,47 +2,37 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
 from random import randint
 
-def hello(update: Update, context: CallbackContext):
-    update.message.reply_text(f'Hello {update.effective_user.first_name}')
+database = {}
+
 
 def help(update: Update, context: CallbackContext):
-    update.message.reply_text(f'hello, help, run')
+    update.message.reply_text(f'It`s a game. There are 21 matches on the table, you can take from 1 to 4 matches per turn.\n\
+Last hand wins.\n To start the game just send /run')
+
 
 def run(update: Update, context: CallbackContext):
-    update.message.reply_text('There are 21 matches on the table, you can take from 1 to 4 matches per turn.\n\
-Last hand wins.')
-    if play_bot():
-        update.message.reply_text('You are winner! Congrats!')
+    if update.effective_user.id in database:
+        if database[update.effective_user.id][1] <= 0:
+            database[update.effective_user.id][1] = 21
+        update.message.reply_text(f'Trere are {database[update.effective_user.id][1]} matches in the heap,\n send /turn and the number of matches you want to take.')
     else:
-        update.message.reply_text('Bot wins. Game over.')
-
-def play_bot():
-    bank = 21
-    player = randint(0, 1)
-    while bank > 0:
-        if player:
-            bank -= move(
-                f'It`s your move, player. {bank} matches left. How many will you take: ')
-            player = 0
-        else:
-            turn = bot_logic(bank)
-            bank -= turn
-            update.message.reply_text(f'Bot`s move. Bot is taking {turn} matches.')
-            player = 1
-    return not player
+        database.update({update.effective_user.id : [update.effective_user.first_name, 21]})
+        update.message.reply_text(f'Trere are {database[update.effective_user.id][1]} matches in the heap,\n send /turn and the number of matches you want to take.')
 
 
-def move(s):
-    while True:
-        try:
-            num = int(input(s))
-            if 1 <= num <= 4:
-                return num
-            else:
-                update.message.reply_text('You can take only 1, 2, 3 or 4 matches!!!')
-                continue
-        except ValueError:
-            update.message.reply_text("Something is wrong, try one more time!")
+def turn(update: Update, context: CallbackContext):
+    msg = update.message.text
+    database[update.effective_user.id][1] -= int(msg.split()[1])
+    if database[update.effective_user.id][1] <= 0:
+        update.message.reply_text(f'You take the last one and win the game!\n Type /run to play again.')
+        return
+    update.message.reply_text(f'{database[update.effective_user.id][1]} matches left, bot`s turn.')
+    bot_take = bot_logic(database[update.effective_user.id][1])
+    database[update.effective_user.id][1] -= bot_take
+    if database[update.effective_user.id][1] <= 0:
+        update.message.reply_text(f'Bot has taken the last one and wins the game... You loose.\n Type /run to play again!')
+        return
+    update.message.reply_text(f'Bot takes {bot_take} matches, {database[update.effective_user.id][1]} matches left.')
 
 
 def bot_logic(s):
@@ -51,21 +41,4 @@ def bot_logic(s):
     else:
         return s % 5
 
-#     update.message.reply_text(f'{x} + {y} = {x+y}')
-
-# def pict(update: Update, context: CallbackContext):
-#     msg = update.message.text
-#     items = msg.split()# сплитим сообщение на /pict 1 2 3
-#     a = int(items[1])
-#     b = int(items[2])
-#     c = int(items[3])
-#     x = np.arange(a, b, c)
-#     y = np.sin(x)
-#     plt.plot(x, y)
-#     plt.savefig('saved_figure.png') #сохраняем график в файл
-#     #update.message.reply_text(f'sin {a}, {b}, {c}')
-#     photo_file = open("saved_figure.png",'rb')
-#     context.bot.sendPhoto(chat_id=update.message.chat_id,
-#                             photo=photo_file,
-#                             caption=(f'sin {a}, {b}, {c}'))
  
