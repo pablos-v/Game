@@ -24,6 +24,7 @@ def run(update: Update, context: CallbackContext):
 
 def turn(update: Update, context: CallbackContext):
     msg = update.message.text # read user`s input
+    print(database[update.effective_user.id])
     database[update.effective_user.id][1] -= int(msg.split()[1]) # count bank after user`s move TODO check 1 <= input <= 4
     if database[update.effective_user.id][1] <= 0:
         update.message.reply_text(f'You take the last one and win the game!\n Type /run to play again.')
