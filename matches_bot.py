@@ -1,15 +1,17 @@
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, CallbackContext, MessageHandler, Filters
 import commands as c
 
 
 
-updater = Updater('5293815590:AAES4pa-TLVjgbu8zNp9fn6f19uboSJ1Lek')
+updater = Updater('5110228065:AAGeoqKoZEpzIhU5GD_b76QLXmuf01uwp9I')
 print("Server started")
 # TODO check the input and show help for every input without commands
+
 updater.dispatcher.add_handler(CommandHandler('help', c.help))
 updater.dispatcher.add_handler(CommandHandler('run', c.run))
 updater.dispatcher.add_handler(CommandHandler('turn', c.turn))
+updater.dispatcher.add_handler(MessageHandler(Filters.command, c.unknown))
 # TODO make method showing user`s win/loss statistics
 
 updater.start_polling()
