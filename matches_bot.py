@@ -4,7 +4,7 @@ import commands as c
 
 
 
-updater = Updater('5110228065:AAGeoqKoZEpzIhU5GD_b76QLXmuf01uwp9I')
+updater = Updater('5137029532:AAGy_rqWXURCQEsYj2zqfp1UUwUjlOijNEM')
 print("Server started")
 # TODO check the input and show help for every input without commands
 
