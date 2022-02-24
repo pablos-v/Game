@@ -1,5 +1,5 @@
-# My venv folder
-.folder
+# file with telegram api
+my_bot_api.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
