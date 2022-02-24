@@ -21,8 +21,9 @@ def run(update: Update, context: CallbackContext):
     user(update, context)
     if database[update.effective_user.id][1] <= 0: # If he played and bank is empty
             database[update.effective_user.id][1] = 21 # He will play again
-        # If player continues game after pause - we remember the last bank TODO add greetings by name
-            update.message.reply_text(f'Trere are {database[update.effective_user.id][1]} matches in the heap,\n send /turn and the number of matches you want to take.')
+        # If player continues game after pause - we remember the last bank add greetings by name
+    if update.effective_user.id in database:
+            update.message.reply_text(f'Hi {update.effective_user.first_name}! Trere are {database[update.effective_user.id][1]} matches in the heap,\n send /turn and the number of matches you want to take.')
     else: # If he is new player - we remember him and add bank 21 match
         update.message.reply_text(f'Trere are {database[update.effective_user.id][1]} matches in the heap,\n send /turn and the number of matches you want to take.')
 
