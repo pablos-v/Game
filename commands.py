@@ -13,7 +13,7 @@ def unknown(update: Update, context: CallbackContext):
 
 
 def help(update: Update, context: CallbackContext):
-    update.message.reply_text(f'Это простая игра. На столе лежит 21 спичка, вы можете брать от 1 до 4 спичек за ход.\n\
+    update.message.reply_text(f'{update.effective_user.first_name}, это простая игра. На столе лежит 21 спичка, вы можете брать от 1 до 4 спичек за ход.\n\
 Победит тот, кто заберёт последнюю.\nДля начала игры пришлите команду /run')
 
 
