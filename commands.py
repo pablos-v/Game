@@ -80,6 +80,6 @@ def bot_logic(s):
 #  проверка ввода
 def input_check(msg):
     try:
-        return 1 <= int(msg) <= 4
+        return 1 <=  int(msg.split()[1]) <= 4
     except:
         return 0
