@@ -33,23 +33,19 @@ def run(update: Update, context: CallbackContext):
     user(update, context)
     if database[update.effective_user.id][bank] <= 0: # если банк игрока пуст
             database[update.effective_user.id][bank] = 21 # то обновить его
-    update.message.reply_text(f'Приветствую {update.effective_user.first_name}!\nВсего спичек на столе: {database[update.effective_user.id][bank]}\nОтправьте /turn и количество спичек, которые хотите забрать.')
+    update.message.reply_text(f'Приветствую {update.effective_user.first_name}!\nВсего спичек на столе: {database[update.effective_user.id][bank]}\nОтправьте количество спичек, которые хотите забрать.')
 
 
 # ход игрока
 def turn(update: Update, context: CallbackContext):
     user(update, context)
-    msg = update.message.text
-    if not input_check(msg):
-        update.message.reply_text(f'Что-то пошло не так, нужно после /turn указать количество спичек от 1 до 4.\nСпичек на столе: {database[update.effective_user.id][bank]}')
-    else:
-        database[update.effective_user.id][bank] -= int(msg.split()[1])
-        if database[update.effective_user.id][bank] <= 0:
-            update.message.reply_text(f'Вы берёте последнюю спичку и побеждаете в игре!\nКоманда /run начнёт новую игру.\nКоманда /stats покажет вашу статистику игр.')
-            database[update.effective_user.id][2] += 1 # счётчик побед
-            return
-        update.message.reply_text(f'Осталось спичек: {database[update.effective_user.id][bank]}, ходит бот.')
-        bot_turn(update, context)
+    database[update.effective_user.id][bank] -= int(update.message.text)
+    if database[update.effective_user.id][bank] <= 0:
+        update.message.reply_text(f'Вы берёте последнюю спичку и побеждаете в игре!\nКоманда /run начнёт новую игру.\nКоманда /stats покажет вашу статистику игр.')
+        database[update.effective_user.id][2] += 1 # счётчик побед
+        return
+    update.message.reply_text(f'Осталось спичек: {database[update.effective_user.id][bank]}, ходит бот.')
+    bot_turn(update, context)
 
 # ход бота
 def bot_turn(update: Update, context: CallbackContext):
