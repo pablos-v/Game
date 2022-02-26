@@ -14,6 +14,7 @@ def unknown(update: Update, context: CallbackContext):
 
 # вывод статистики игрока
 def stats(update, context):
+    user(update, context)
     update.message.reply_text(f'{update.effective_user.first_name}, количество ваших побед: {database[update.effective_user.id][2]}\nколичество поражений: {database[update.effective_user.id][3]}\n\nХотите сыграть ещё? Нажмите /run')
 
 
