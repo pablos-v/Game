@@ -3,13 +3,18 @@ from telegram.ext import Updater, CommandHandler, CallbackContext
 from random import randint
 
 
-database = {} # БД вида {ID:[Имя,банк]}
+database = {} # БД вида {ID:[Имя, банк, побед, поражений]}
 bank = 1 # номер элемента списка в БД
 
 
 # проверка ввода корректной команды
 def unknown(update: Update, context: CallbackContext):
     update.message.reply_text(f'Я вот прям не знаю как на это ваше {update.message.text} реагировать... Расслабьтесь, почитайте /help')
+
+
+# вывод статистики игрока
+def stats(update, context):
+    update.message.reply_text(f'{update.effective_user.first_name}, количество ваших побед: {database[update.effective_user.id][2]}\nколичество поражений: {database[update.effective_user.id][3]}\n\nХотите сыграть ещё? Нажмите /run')
 
 
 def help(update: Update, context: CallbackContext):
@@ -20,8 +25,7 @@ def help(update: Update, context: CallbackContext):
 # проверка и добавление пользователя в БД
 def user(update, context):
     if update.effective_user.id not in database:
-        database.update({update.effective_user.id : [update.effective_user.first_name, 21]})
-        # TODO добавить параметры подсчёта выигрышей/проигрышей в БД
+        database.update({update.effective_user.id : [update.effective_user.first_name, 21, 0, 0]})
  
 
 # запуск игры 
@@ -41,8 +45,8 @@ def turn(update: Update, context: CallbackContext):
     else:
         database[update.effective_user.id][bank] -= int(msg.split()[1])
         if database[update.effective_user.id][bank] <= 0:
-            update.message.reply_text(f'Вы берёте последнюю спичку и побеждаете в игре!\nКоманда /run начнёт новую игру.')
-            # TODO счётчик побед
+            update.message.reply_text(f'Вы берёте последнюю спичку и побеждаете в игре!\nКоманда /run начнёт новую игру.\nКоманда /stats покажет вашу статистику игр.')
+            database[update.effective_user.id][2] += 1 # счётчик побед
             return
         update.message.reply_text(f'Осталось спичек: {database[update.effective_user.id][bank]}, ходит бот.')
         bot_turn(update, context)
@@ -57,8 +61,8 @@ def bot_turn(update: Update, context: CallbackContext):
     update.message.reply_text(f'Бот забирает {bot_take} {s}')
     database[update.effective_user.id][bank] -= bot_take
     if database[update.effective_user.id][bank] <= 0:
-        update.message.reply_text(f'Вы проиграли, бот забрал последнюю спичку...\nКоманда /run начнёт новую игру!')
-        # TODO счётчик поражений
+        update.message.reply_text(f'Вы проиграли, бот забрал последнюю спичку...\nКоманда /run начнёт новую игру!\nКоманда /stats покажет вашу статистику игр.')
+        database[update.effective_user.id][3] += 1 # счётчик поражений
         return
     update.message.reply_text(f'Осталось спичек: {database[update.effective_user.id][bank]}')
 

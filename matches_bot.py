@@ -10,11 +10,11 @@ print("Server started")
 
 updater.dispatcher.add_handler(CommandHandler('start', c.help))
 updater.dispatcher.add_handler(CommandHandler('help', c.help))
+updater.dispatcher.add_handler(CommandHandler('stats', c.stats))
 updater.dispatcher.add_handler(CommandHandler('run', c.run))
 updater.dispatcher.add_handler(CommandHandler('turn', c.turn))
 updater.dispatcher.add_handler(MessageHandler(Filters.command, c.unknown))
 updater.dispatcher.add_handler(MessageHandler(Filters.text, c.unknown))
-# TODO метод, показывающий статистику побед/поражений
 
 updater.start_polling()
 updater.idle()
