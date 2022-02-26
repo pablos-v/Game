@@ -1,3 +1,4 @@
+from email import message
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
 from random import randint
@@ -40,13 +41,18 @@ def run(update: Update, context: CallbackContext):
 # ход игрока
 def turn(update: Update, context: CallbackContext):
     user(update, context)
-    database[update.effective_user.id][bank] -= int(update.message.text)
-    if database[update.effective_user.id][bank] <= 0:
-        update.message.reply_text(f'Вы берёте последнюю спичку и побеждаете в игре!\nКоманда /run начнёт новую игру.\nКоманда /stats покажет вашу статистику игр.')
-        database[update.effective_user.id][2] += 1 # счётчик побед
-        return
-    update.message.reply_text(f'Осталось спичек: {database[update.effective_user.id][bank]}, ходит бот.')
-    bot_turn(update, context)
+    msg = int(update.message.text)
+    if 1 <= msg <= 4: #  проверка ввода
+        database[update.effective_user.id][bank] -= int(update.message.text)
+        if database[update.effective_user.id][bank] <= 0:
+            update.message.reply_text(f'Вы берёте последнюю спичку и побеждаете в игре!\nКоманда /run начнёт новую игру.\nКоманда /stats покажет вашу статистику игр.')
+            database[update.effective_user.id][2] += 1 # счётчик побед
+            return
+        update.message.reply_text(f'Осталось спичек: {database[update.effective_user.id][bank]}, ходит бот.')
+        bot_turn(update, context)
+    else:
+        unknown(update, context)
+        
 
 # ход бота
 def bot_turn(update: Update, context: CallbackContext):
@@ -71,9 +77,5 @@ def bot_logic(s):
         return s % 5
 
 
-#  проверка ввода
-def input_check(msg):
-    try:
-        return 1 <= int(msg.split()[1]) <= 4
-    except:
-        return 0
+
+
