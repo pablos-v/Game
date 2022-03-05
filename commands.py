@@ -73,12 +73,16 @@ def bot_turn(update: Update, context: CallbackContext):
         return
     update.message.reply_text('Ваш ход.')
 
+
 # логика бота
 def bot_logic(s):
     if not s % 5:
         return randint(1, 4)
     else:
-        return s % 5
+        if randint(1, 10) > 3: # вероятность ошибки 30%
+            return s % 5
+        else:
+            return randint(1, 4)
 
 
 # проверка ввода
