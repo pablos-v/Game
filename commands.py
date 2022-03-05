@@ -26,9 +26,9 @@ def stats(update: Update, context: CallbackContext):
 
 def help(update: Update, context: CallbackContext):
     user(update, context)
-    update.message.reply_text(f'Приветствую {update.effective_user.first_name}, это простая игра. \
-На столе лежит {s(database[update.effective_user.id][bank])}. Вы можете брать от \
-1 до 4 спичек за ход.\nПобедит тот, кто заберёт последнюю.\nСколько штук возьмёте?')
+    update.message.reply_text(f'Приветствую {update.effective_user.first_name}, это простая игра.\n\
+На столе лежит {s(database[update.effective_user.id][bank])}. Вы можете брать от 1 до 4 спичек за ход.\n\
+Победит тот, кто заберёт последнюю. Команда /cheat покажет подсказку.\nСколько спичек возьмёте?')
 
 
 # проверка и добавление пользователя в БД
@@ -79,10 +79,20 @@ def bot_logic(s):
     if not s % 5:
         return randint(1, 4)
     else:
-        if randint(1, 10) > 3: # вероятность ошибки 30%
+        if randint(1, 10) > 4: # вероятность ошибки 40%
             return s % 5
         else:
             return randint(1, 4)
+
+
+# подсказка
+def cheat(update: Update, context: CallbackContext):
+    user(update, context)
+    if database[update.effective_user.id][bank] % 5:
+        update.message.reply_text(f'Так и быть, подскажу, сейчас лучше всего взять {database[update.effective_user.id][bank] % 5}')
+    else:
+        update.message.reply_text(f'Иногда лучше просто плыть по течению, сделайте ход.')
+    return
 
 
 # проверка ввода
