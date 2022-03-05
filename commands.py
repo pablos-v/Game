@@ -6,9 +6,11 @@ from random import randint
 
 database = {} # БД вида {ID:[Имя, банк, побед, поражений]}
 bank = 1 # номер элемента списка в БД
+wins = 2
+loss = 3
 
 
-# проверка ввода корректной команды
+# сообщение о неизвестной команде
 def unknown(update: Update, context: CallbackContext):
     update.message.reply_text(f'Я вот прям не знаю как на это ваше "{update.message.text}" \
 реагировать... Расслабьтесь, почитайте /help')
@@ -17,15 +19,15 @@ def unknown(update: Update, context: CallbackContext):
 # вывод статистики игрока
 def stats(update: Update, context: CallbackContext):
     user(update, context)
-    update.message.reply_text(f'{update.effective_user.first_name}, количество ваших побед: \
-{database[update.effective_user.id][2]}\nколичество поражений: {database[update.effective_user.id][3]}\
-\n\nХотите сыграть ещё? На столе спичек: {database[update.effective_user.id][bank]}, сколько берёте?')
+    update.message.reply_text(f'{update.effective_user.first_name}, вы одержали\nпобед: \
+{database[update.effective_user.id][wins]}\nпоражений: {database[update.effective_user.id][loss]}\
+\n\nХотите сыграть ещё? На столе {s(database[update.effective_user.id][bank])}, сколько берёте?')
 
 
 def help(update: Update, context: CallbackContext):
     user(update, context)
     update.message.reply_text(f'Приветствую {update.effective_user.first_name}, это простая игра. \
-На столе лежат спички, их {database[update.effective_user.id][bank]}. Вы можете брать от \
+На столе лежит {s(database[update.effective_user.id][bank])}. Вы можете брать от \
 1 до 4 спичек за ход.\nПобедит тот, кто заберёт последнюю.\nСколько штук возьмёте?')
 
 
@@ -44,12 +46,12 @@ def turn(update: Update, context: CallbackContext):
         if database[update.effective_user.id][bank] <= 0: # проверка на победу
             update.message.reply_text('Вы берёте последнюю спичку и побеждаете в игре!\n\
 Команда /stats покажет вашу статистику игр.')
-            database[update.effective_user.id][2] += 1 # счётчик побед
+            database[update.effective_user.id][wins] += 1 # счётчик побед
             database[update.effective_user.id][bank] = 21
             update.message.reply_text('Я снова насыпал 21 спичку на стол и прошу реванш!\n\
 Сколько спичек возьмёте?')
             return
-        update.message.reply_text(f'Осталось спичек: {database[update.effective_user.id][bank]}, \
+        update.message.reply_text(f'Теперь на столе {s(database[update.effective_user.id][bank])}, \
 ходит бот.')
         bot_turn(update, context)
     else:
@@ -59,23 +61,19 @@ def turn(update: Update, context: CallbackContext):
 # ход бота
 def bot_turn(update: Update, context: CallbackContext):
     bot_take = bot_logic(database[update.effective_user.id][bank])
-    if bot_take == 1:
-        s = 'спичку'
-    else:
-        s = 'спички'
-    update.message.reply_text(f'Бот забирает {bot_take} {s}')
     database[update.effective_user.id][bank] -= bot_take
+    update.message.reply_text(f'Бот забирает {bot_take}, остаётся {s(database[update.effective_user.id][bank])}.')   
     if database[update.effective_user.id][bank] <= 0: # проверка на проигрыш
         update.message.reply_text(f'Вы проиграли, бот забрал последнюю спичку...\n\
 Команда /stats покажет вашу статистику игр.')
-        database[update.effective_user.id][3] += 1 # счётчик поражений
+        database[update.effective_user.id][loss] += 1 # счётчик поражений
         database[update.effective_user.id][bank] = 21
-        update.message.reply_text('Я ещё не устал и могу сыграть снова. На столе опять 21 спичка.\n\
+        update.message.reply_text('Я ещё не устал и могу сыграть снова! На столе опять 21 спичка.\n\
 Сколько возьмёте?')
         return
-    update.message.reply_text(f'Осталось спичек: {database[update.effective_user.id][bank]}')
+    update.message.reply_text('Ваш ход.')
 
-
+# логика бота
 def bot_logic(s):
     if not s % 5:
         return randint(1, 4)
@@ -83,9 +81,19 @@ def bot_logic(s):
         return s % 5
 
 
-#  проверка ввода
+# проверка ввода
 def input_check(msg):
     try:
         return 1 <= int(msg) <= 4
     except:
         return 0
+
+
+# правильно склоняем слово "спичка"
+def s(n):
+    if n % 10 == 1 and n != 11:
+        return f'{n} спичка'
+    elif n % 10 in [2, 3, 4] and not n in [12, 13, 14]:
+        return f'{n} спички'
+    else:
+        return f'{n} спичек'

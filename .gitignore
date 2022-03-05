@@ -1,6 +1,9 @@
 # file with telegram api
 my_bot_api.py
 
+# my draft
+draft.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
