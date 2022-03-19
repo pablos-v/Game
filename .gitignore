@@ -4,6 +4,7 @@ my_bot_api.py
 # my draft
 draft.py
 log.csv
+my-test.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
