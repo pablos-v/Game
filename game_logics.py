@@ -4,25 +4,27 @@ from telegram import Update
 from telegram.ext import CallbackContext
 import log
 import time
+import db_sqlite as db
 
+bank = 'bank'
+# TODO b = db.ask(bank, update.effective_user.id)
 
 # ход игрока
 def turn(update: Update, context: CallbackContext):
     c.user(update, context)
     msg = update.message.text
     if input_check(msg): #  проверка ввода
-        c.database[update.effective_user.id][c.bank] -= int(msg)
-        if c.database[update.effective_user.id][c.bank] <= 0: # проверка на победу
+        db.edit_bank(update.effective_user.id, int(msg))
+        if db.ask(bank, update.effective_user.id) <= 0: # проверка на победу
             update.message.reply_text('Вы берёте последнюю спичку и побеждаете в игре!\n\
 Команда /stats покажет вашу статистику игр.')
-            c.database[update.effective_user.id][c.wins] += 1 # счётчик побед
+            db.winloss(1, update.effective_user.id) # счётчик побед
             log.write(update.effective_user.id, update.effective_user.first_name, 1)
-            c.database[update.effective_user.id][c.bank] = 21
             time.sleep(1)
             update.message.reply_text('Я снова насыпал 21 спичку на стол и прошу реванш!\n\
 Сколько спичек возьмёте?')
             return
-        update.message.reply_text(f'Теперь на столе {s(c.database[update.effective_user.id][c.bank])}, \
+        update.message.reply_text(f'Теперь на столе {s(db.ask(bank, update.effective_user.id))}, \
 хожу я.')
         bot_turn(update, context)
     else:
@@ -31,15 +33,14 @@ def turn(update: Update, context: CallbackContext):
 
 # ход бота
 def bot_turn(update: Update, context: CallbackContext):
-    bot_take = bot_logic(c.database[update.effective_user.id][c.bank])
-    c.database[update.effective_user.id][c.bank] -= bot_take
-    update.message.reply_text(f'Я беру {bot_take}, остаётся {s(c.database[update.effective_user.id][c.bank])}.')   
-    if c.database[update.effective_user.id][c.bank] <= 0: # проверка на проигрыш
+    bot_take = bot_logic(db.ask(bank, update.effective_user.id))
+    db.edit_bank(update.effective_user.id, int(bot_take))
+    update.message.reply_text(f'Я беру {bot_take}, остаётся {s(db.ask(bank, update.effective_user.id))}.')   
+    if db.ask(bank, update.effective_user.id) <= 0: # проверка на проигрыш
         update.message.reply_text(f'Вы проиграли, я забрал последнюю спичку...\n\
 Команда /stats покажет вашу статистику игр.')
-        c.database[update.effective_user.id][c.loss] += 1 # счётчик поражений
+        db.winloss(0, update.effective_user.id) # счётчик поражений
         log.write(update.effective_user.id, update.effective_user.first_name, 0)
-        c.database[update.effective_user.id][c.bank] = 21
         time.sleep(1)
         update.message.reply_text('Я ещё не устал и могу сыграть снова! На столе опять 21 спичка.\n\
 Сколько возьмёте?')
