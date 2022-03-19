@@ -2,6 +2,8 @@ import commands as c
 from random import randint
 from telegram import Update
 from telegram.ext import CallbackContext
+import log
+import time
 
 
 # ход игрока
@@ -14,7 +16,9 @@ def turn(update: Update, context: CallbackContext):
             update.message.reply_text('Вы берёте последнюю спичку и побеждаете в игре!\n\
 Команда /stats покажет вашу статистику игр.')
             c.database[update.effective_user.id][c.wins] += 1 # счётчик побед
+            log.write(update.effective_user.id, update.effective_user.first_name, 1)
             c.database[update.effective_user.id][c.bank] = 21
+            time.sleep(1)
             update.message.reply_text('Я снова насыпал 21 спичку на стол и прошу реванш!\n\
 Сколько спичек возьмёте?')
             return
@@ -34,7 +38,9 @@ def bot_turn(update: Update, context: CallbackContext):
         update.message.reply_text(f'Вы проиграли, я забрал последнюю спичку...\n\
 Команда /stats покажет вашу статистику игр.')
         c.database[update.effective_user.id][c.loss] += 1 # счётчик поражений
+        log.write(update.effective_user.id, update.effective_user.first_name, 0)
         c.database[update.effective_user.id][c.bank] = 21
+        time.sleep(1)
         update.message.reply_text('Я ещё не устал и могу сыграть снова! На столе опять 21 спичка.\n\
 Сколько возьмёте?')
     update.message.reply_text('Ваш ход.')
