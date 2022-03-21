@@ -7,7 +7,6 @@ import time
 import db_sqlite as db
 
 bank = 'bank'
-# TODO b = db.ask(bank, update.effective_user.id)
 
 # ход игрока
 def turn(update: Update, context: CallbackContext):

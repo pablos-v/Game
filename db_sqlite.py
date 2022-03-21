@@ -14,21 +14,20 @@ with con:
         );
     """)
 
-
+# добавить нового игрока в БД
 def adduser(data):
     sql = 'INSERT INTO USER (id, name, bank, wins, loss) values(?, ?, ?, ?, ?)'
     with con:
         con.execute(sql, data)
 
-
+# зафиксировать победу/поражение, обновить банк
 def winloss(wl, ID):
     what = "wins" if wl else "loss"
     n = ask(what, ID) + 1
     with con:
-        con.execute(f"UPDATE USER SET {what}={n} WHERE id={ID}") # TODO con.execute(f"UPDATE USER SET {what}={ask(what, ID)+1}, bank=21 WHERE id={ID}")
-        con.execute(f"UPDATE USER SET bank=21 WHERE id={ID}")
+        con.execute(f"UPDATE USER SET {what}={ask(what, ID)+1}, bank=21 WHERE id={ID}")
 
-
+# изменение банка после хода
 def edit_bank(ID, amount):
     what = 'bank'
     with con:
@@ -42,14 +41,3 @@ def idlist():
 def ask(what, ID):
     return con.execute(f"SELECT {what} FROM USER WHERE id={ID}").fetchone()[0]
 
-# d1 = (720893757, 'Павел', 21, 0, 0)
-# d2 = (4444, 'Павел', 21, 0, 0)
-# d3 = (555, 'Павел', 21, 0, 0)
-# adduser(d1)
-# adduser(d2)
-# adduser(d3)
-# data = con.execute("SELECT * FROM USER")
-# for row in data:
-#     print(row)
-
-# print(idlist())

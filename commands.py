@@ -31,7 +31,6 @@ def cheat(update: Update, context: CallbackContext):
         update.message.reply_text(f'Так и быть, подскажу. Сейчас лучше всего взять {q}')
     else:
         update.message.reply_text(f'Иногда лучше просто плыть по течению, сделайте ход.')
-    return # TODO удалить?
 
 
 # проверка и добавление пользователя в БД
